@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { firestore } from '../firebase/firestore';
+import { carService } from '../DAO/CarService';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const Edit: React.FC = () => {
@@ -17,20 +16,25 @@ const Edit: React.FC = () => {
         return;
       }
       try {
-        const docRef = doc(firestore, 'cars', id);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setCar(docSnap.data() as typeof car);
+        const fetchedCar = await carService.getCarById(id);
+        
+        console.log("Fetched Car:", fetchedCar);
+        
+        if (fetchedCar) {
+          const { color, make, mileage, model, price, imageUrl } = fetchedCar;
+          setCar({ color, make, mileage, model, price, imageUrl });
         } else {
-          setErrorMessage('Car not found.');
+          setErrorMessage('Car data is incomplete or missing.');
         }
-      } catch {
+      } catch (error) {
         setErrorMessage('Failed to fetch car data.');
       }
     };
-
+  
     fetchCar();
   }, [id]);
+  
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCar({ ...car, [e.target.name]: e.target.value });
@@ -59,18 +63,19 @@ const Edit: React.FC = () => {
       return;
     }
     try {
-      const docRef = doc(firestore, 'cars', id);
-      await updateDoc(docRef, {
+      await carService.updateCar(id, {
         color: car.color,
         make: car.make,
         mileage: car.mileage,
         model: car.model,
         price: Number(car.price),
-        imageUrl: car.imageUrl
+        imageUrl: car.imageUrl,
       });
       setSuccessMessage('Car updated successfully!');
-    } catch {
+      setErrorMessage('');
+    } catch (error) {
       setErrorMessage('Failed to update car.');
+      setSuccessMessage('');
     }
   };
 
@@ -80,12 +85,13 @@ const Edit: React.FC = () => {
       return;
     }
     try {
-      const docRef = doc(firestore, 'cars', id);
-      await deleteDoc(docRef);
+      await carService.deleteCar(id);
       setSuccessMessage('Car deleted successfully!');
-      navigate('/view');
-    } catch {
+      setErrorMessage('');
+      navigate('/view'); // Redirect back to view page after deletion
+    } catch (error) {
       setErrorMessage('Failed to delete car.');
+      setSuccessMessage('');
     }
   };
 

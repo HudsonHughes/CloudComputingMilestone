@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { addDoc, collection } from 'firebase/firestore';
-import { firestore } from '../firebase/firestore';
+import { carService } from '../DAO/CarService';
 
 const Add: React.FC = () => {
   const [car, setCar] = useState({ color: '', make: '', mileage: '', model: '', price: '', imageUrl: '' });
@@ -30,13 +29,13 @@ const Add: React.FC = () => {
       return;
     }
     try {
-      await addDoc(collection(firestore, 'cars'), {
+      await carService.addCar({
         color: car.color,
         make: car.make,
         mileage: car.mileage,
         model: car.model,
         price: Number(car.price),
-        imageUrl: car.imageUrl
+        imageUrl: car.imageUrl,
       });
       setSuccessMessage('Car added successfully!');
       setErrorMessage('');

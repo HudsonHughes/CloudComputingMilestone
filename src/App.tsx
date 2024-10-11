@@ -5,7 +5,7 @@ import ForgotPassword from './Pages/ForgotPassword';
 import Add from './Pages/Add';
 import Edit from './Pages/Edit';
 import View from './Pages/View';
-import { auth } from './firebase/firestore';
+import { auth } from './DAO/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import NavBar from './Components/NavBar';
 

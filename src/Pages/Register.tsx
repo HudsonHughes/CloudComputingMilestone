@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { auth } from '../firebase/firestore';
+import { auth } from '../DAO/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 const Register: React.FC = () => {

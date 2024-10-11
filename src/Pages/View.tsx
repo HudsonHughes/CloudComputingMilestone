@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { firestore } from '../firebase/firestore';
+import { carService } from '../DAO/CarService';
 import { Link } from 'react-router-dom';
 
 const View: React.FC = () => {
@@ -9,13 +8,13 @@ const View: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const querySnapshot = await getDocs(collection(firestore, 'cars'));
-      const docsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setData(docsData);
-      setLoading(false);
+      try {
+        const cars = await carService.getAllCars();
+        setData(cars);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching cars: ', error);
+      }
     };
 
     fetchData();
@@ -44,11 +43,7 @@ const View: React.FC = () => {
           {data.map((car) => (
             <tr key={car.id} className="border-t">
               <td className="px-4 py-2">
-                <img
-                  src={car.imageUrl}
-                  alt={`${car.make} ${car.model}`}
-                  className="w-32 h-32 object-cover"
-                />
+                <img src={car.imageUrl} alt={`${car.make} ${car.model}`} className="w-32 h-32 object-cover" />
               </td>
               <td className="px-4 py-2">{car.color}</td>
               <td className="px-4 py-2">{car.make}</td>
@@ -56,12 +51,7 @@ const View: React.FC = () => {
               <td className="px-4 py-2">{car.mileage}</td>
               <td className="px-4 py-2">{car.price}</td>
               <td className="px-4 py-2">
-                <Link
-                  to={`/edit/${car.id}`}
-                  className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-700"
-                >
-                  Edit
-                </Link>
+                <Link to={`/edit/${car.id}`} className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-700">Edit</Link>
               </td>
             </tr>
           ))}
