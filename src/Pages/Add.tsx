@@ -1,176 +1,97 @@
-import React, { useState } from 'react';
-import { carService } from '../DAO/CarService';
+import React from 'react';
+import useAddCar from '../BL/useAddCar';
 
 const Add: React.FC = () => {
-  const [car, setCar] = useState({ color: '', make: '', mileage: '', model: '', price: '', imageUrl: '' });
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCar({ ...car, [e.target.name]: e.target.value });
-  };
-
-  const validateForm = (): boolean => {
-    if (!car.color || !car.make || !car.mileage || !car.model || !car.price || !car.imageUrl) {
-      setErrorMessage('All fields are required.');
-      return false;
-    }
-    if (isNaN(Number(car.price))) {
-      setErrorMessage('Price must be a number.');
-      return false;
-    }
-    setErrorMessage('');
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!validateForm()) {
-      return;
-    }
-    try {
-      await carService.addCar({
-        color: car.color,
-        make: car.make,
-        mileage: car.mileage,
-        model: car.model,
-        price: Number(car.price),
-        imageUrl: car.imageUrl,
-      });
-      setSuccessMessage('Car added successfully!');
-      setErrorMessage('');
-      setCar({ color: '', make: '', mileage: '', model: '', price: '', imageUrl: '' });
-    } catch (error) {
-      setErrorMessage('Failed to add car.');
-      setSuccessMessage('');
-    }
-  };
+  const { carData, handleChange, handleSubmit, loading, errorMessage, successMessage } = useAddCar();
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-black">
-          Add New Car
-        </h2>
-      </div>
+    <div className="container mx-auto px-4">
+      <h1 className="text-2xl font-bold mb-4">Add New Car</h1>
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {successMessage && <p className="text-green-500">{successMessage}</p>}
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
-          {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Color</label>
+          <input
+            type="text"
+            name="color"
+            value={carData.color}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-300"
+            required
+          />
+        </div>
 
-          <div>
-            <label htmlFor="color" className="block text-sm font-medium leading-6 text-black">
-              Color
-            </label>
-            <div className="mt-2">
-              <input
-                id="color"
-                name="color"
-                type="text"
-                required
-                value={car.color}
-                className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Make</label>
+          <input
+            type="text"
+            name="make"
+            value={carData.make}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-300"
+            required
+          />
+        </div>
 
-          <div>
-            <label htmlFor="make" className="block text-sm font-medium leading-6 text-black">
-              Make
-            </label>
-            <div className="mt-2">
-              <input
-                id="make"
-                name="make"
-                type="text"
-                required
-                value={car.make}
-                className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Mileage</label>
+          <input
+            type="text"
+            name="mileage"
+            value={carData.mileage}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-300"
+            required
+          />
+        </div>
 
-          <div>
-            <label htmlFor="mileage" className="block text-sm font-medium leading-6 text-black">
-              Mileage
-            </label>
-            <div className="mt-2">
-              <input
-                id="mileage"
-                name="mileage"
-                type="text"
-                required
-                value={car.mileage}
-                className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Model</label>
+          <input
+            type="text"
+            name="model"
+            value={carData.model}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-300"
+            required
+          />
+        </div>
 
-          <div>
-            <label htmlFor="model" className="block text-sm font-medium leading-6 text-black">
-              Model
-            </label>
-            <div className="mt-2">
-              <input
-                id="model"
-                name="model"
-                type="text"
-                required
-                value={car.model}
-                className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Price</label>
+          <input
+            type="number"
+            name="price"
+            value={carData.price}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-300"
+            required
+          />
+        </div>
 
-          <div>
-            <label htmlFor="price" className="block text-sm font-medium leading-6 text-black">
-              Price
-            </label>
-            <div className="mt-2">
-              <input
-                id="price"
-                name="price"
-                type="text"
-                required
-                value={car.price}
-                className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Image URL</label>
+          <input
+            type="text"
+            name="imageUrl"
+            value={carData.imageUrl}
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-300"
+          />
+        </div>
 
-          <div>
-            <label htmlFor="imageUrl" className="block text-sm font-medium leading-6 text-black">
-              Image URL
-            </label>
-            <div className="mt-2">
-              <input
-                id="imageUrl"
-                name="imageUrl"
-                type="text"
-                required
-                value={car.imageUrl}
-                className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-300 px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Add Car
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="mt-4">
+          <button
+            type="submit"
+            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-500"
+            disabled={loading}
+          >
+            Add Car
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

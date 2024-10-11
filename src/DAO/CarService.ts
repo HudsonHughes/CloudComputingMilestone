@@ -1,6 +1,16 @@
 import { firestore } from '../DAO/firestore';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, getDoc } from 'firebase/firestore';
 
+interface Car {
+    id: string;
+    color: string;
+    make: string;
+    mileage: string;
+    model: string;
+    price: number;
+    imageUrl: string;
+  }
+
 class CarService {
   private carsCollection;
 
@@ -9,25 +19,38 @@ class CarService {
   }
 
   async getAllCars() {
-    try {
-      const querySnapshot = await getDocs(this.carsCollection);
-      return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    } catch (error) {
-      console.error('Error fetching cars: ', error);
-      throw error;
-    }
+    const carCollection = collection(firestore, 'cars');
+    const carSnapshot = await getDocs(carCollection);
+    const cars = carSnapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,           // Use Firestore document ID as the car ID
+        color: data.color,     // Map the rest of the fields
+        make: data.make,
+        mileage: data.mileage,
+        model: data.model,
+        price: data.price,
+        imageUrl: data.imageUrl,
+      } as Car;
+    });
+    return cars;
   }
 
   async getCarById(id: string) {
     const docRef = doc(firestore, 'cars', id);
     const carDoc = await getDoc(docRef);
-
+  
     if (carDoc.exists()) {
-      return carDoc.data(); // This should return the car data fields
+      const carData = carDoc.data() as Car;
+      return {
+        ...carData,  // Spread the fields from the document data
+        id: carDoc.id,
+      };
     } else {
       throw new Error('Car not found');
     }
   }
+  
 
   async addCar(carData: { color: string; make: string; mileage: string; model: string; price: number; imageUrl: string }) {
     try {

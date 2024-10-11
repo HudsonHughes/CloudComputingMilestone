@@ -1,28 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { carService } from '../DAO/CarService';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import useCarList from '../BL/useCarList';
 
 const View: React.FC = () => {
-  const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { cars, loading, errorMessage } = useCarList();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const cars = await carService.getAllCars();
-        setData(cars);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching cars: ', error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (errorMessage) return <div>{errorMessage}</div>;
 
   return (
     <div className="container mx-auto px-4">
@@ -30,29 +14,25 @@ const View: React.FC = () => {
       <table className="min-w-full table-auto mb-4">
         <thead>
           <tr className="bg-gray-200 text-gray-700">
-            <th className="px-4 py-2">Image</th>
-            <th className="px-4 py-2">Color</th>
-            <th className="px-4 py-2">Make</th>
-            <th className="px-4 py-2">Model</th>
-            <th className="px-4 py-2">Mileage</th>
-            <th className="px-4 py-2">Price</th>
-            <th className="px-4 py-2">Actions</th>
+            <th>Image</th>
+            <th>Color</th>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Mileage</th>
+            <th>Price</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {data.map((car) => (
-            <tr key={car.id} className="border-t">
-              <td className="px-4 py-2">
-                <img src={car.imageUrl} alt={`${car.make} ${car.model}`} className="w-32 h-32 object-cover" />
-              </td>
-              <td className="px-4 py-2">{car.color}</td>
-              <td className="px-4 py-2">{car.make}</td>
-              <td className="px-4 py-2">{car.model}</td>
-              <td className="px-4 py-2">{car.mileage}</td>
-              <td className="px-4 py-2">{car.price}</td>
-              <td className="px-4 py-2">
-                <Link to={`/edit/${car.id}`} className="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-700">Edit</Link>
-              </td>
+          {cars.map(car => (
+            <tr key={car.id}>
+              <td><img src={car.imageUrl} alt={car.model} className="w-32 h-32 object-cover" /></td>
+              <td>{car.color}</td>
+              <td>{car.make}</td>
+              <td>{car.model}</td>
+              <td>{car.mileage}</td>
+              <td>{car.price}</td>
+              <td><Link to={`/edit/${car.id}`}>Edit</Link></td>
             </tr>
           ))}
         </tbody>
