@@ -3,65 +3,46 @@ import { doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { firestore } from '../firebase/firestore';
 import { useParams, useNavigate } from 'react-router-dom';
 
-interface User {
-  name: string;
-  email: string;
-  city: string;
-  age: number;
-}
-
 const Edit: React.FC = () => {
-  const [user, setUser] = useState<User>({ name: '', email: '', city: '', age: 0 });
+  const [car, setCar] = useState({ color: '', make: '', mileage: '', model: '', price: '', imageUrl: '' });
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchCar = async () => {
       if (!id) {
-        setErrorMessage('No user ID provided');
+        setErrorMessage('No car ID provided.');
         return;
       }
-
       try {
-        const docRef = doc(firestore, 'users', id);
+        const docRef = doc(firestore, 'cars', id);
         const docSnap = await getDoc(docRef);
-
         if (docSnap.exists()) {
-          setUser(docSnap.data() as User);
+          setCar(docSnap.data() as typeof car);
         } else {
-          setErrorMessage('User not found');
+          setErrorMessage('Car not found.');
         }
-      } catch (error) {
-        console.error('Error fetching user:', error);
-        setErrorMessage('Failed to fetch user data.');
+      } catch {
+        setErrorMessage('Failed to fetch car data.');
       }
     };
 
-    fetchUser();
+    fetchCar();
   }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
-  };
-
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    setCar({ ...car, [e.target.name]: e.target.value });
   };
 
   const validateForm = (): boolean => {
-    if (!user.name || !user.email || !user.city || !user.age) {
+    if (!car.color || !car.make || !car.mileage || !car.model || !car.price || !car.imageUrl) {
       setErrorMessage('All fields are required.');
       return false;
     }
-    if (!isValidEmail(user.email)) {
-      setErrorMessage('Please enter a valid email.');
-      return false;
-    }
-    if (isNaN(user.age) || user.age <= 0) {
-      setErrorMessage('Please enter a valid age.');
+    if (isNaN(Number(car.price))) {
+      setErrorMessage('Price must be a number.');
       return false;
     }
     setErrorMessage('');
@@ -70,51 +51,41 @@ const Edit: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!validateForm()) {
       return;
     }
-
     if (!id) {
-      setErrorMessage('No user ID available');
+      setErrorMessage('No car ID available.');
       return;
     }
-
     try {
-      const docRef = doc(firestore, 'users', id);
+      const docRef = doc(firestore, 'cars', id);
       await updateDoc(docRef, {
-        name: user.name,
-        email: user.email,
-        city: user.city,
-        age: Number(user.age), // Ensure age is a number
+        color: car.color,
+        make: car.make,
+        mileage: car.mileage,
+        model: car.model,
+        price: Number(car.price),
+        imageUrl: car.imageUrl
       });
-
-      setSuccessMessage('User updated successfully!');
-      setErrorMessage('');
-    } catch (error) {
-      console.error('Error updating document: ', error);
-      setErrorMessage('Failed to update user. Please try again.');
-      setSuccessMessage('');
+      setSuccessMessage('Car updated successfully!');
+    } catch {
+      setErrorMessage('Failed to update car.');
     }
   };
 
   const handleDelete = async () => {
     if (!id) {
-      setErrorMessage('No user ID available');
+      setErrorMessage('No car ID available.');
       return;
     }
-
     try {
-      const docRef = doc(firestore, 'users', id);
+      const docRef = doc(firestore, 'cars', id);
       await deleteDoc(docRef);
-
-      setSuccessMessage('User deleted successfully!');
-      setErrorMessage('');
+      setSuccessMessage('Car deleted successfully!');
       navigate('/view');
-    } catch (error) {
-      console.error('Error deleting document: ', error);
-      setErrorMessage('Failed to delete user. Please try again.');
-      setSuccessMessage('');
+    } catch {
+      setErrorMessage('Failed to delete car.');
     }
   };
 
@@ -122,30 +93,26 @@ const Edit: React.FC = () => {
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <h2 className="text-center text-2xl font-bold leading-9 tracking-tight text-black">
-          Edit User
+          Edit Car
         </h2>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form className="space-y-6" onSubmit={handleSubmit}>
-          {errorMessage && (
-            <p className="text-red-500 text-sm">{errorMessage}</p>
-          )}
-          {successMessage && (
-            <p className="text-green-500 text-sm">{successMessage}</p>
-          )}
+          {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
+          {successMessage && <p className="text-green-500 text-sm">{successMessage}</p>}
 
           <div>
-            <label htmlFor="name" className="block text-sm font-medium leading-6 text-black">
-              Name
+            <label htmlFor="color" className="block text-sm font-medium leading-6 text-black">
+              Color
             </label>
             <div className="mt-2">
               <input
-                id="name"
-                name="name"
+                id="color"
+                name="color"
                 type="text"
                 required
-                value={user.name}
+                value={car.color}
                 className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 onChange={handleChange}
               />
@@ -153,33 +120,16 @@ const Edit: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium leading-6 text-black">
-              Email
+            <label htmlFor="make" className="block text-sm font-medium leading-6 text-black">
+              Make
             </label>
             <div className="mt-2">
               <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={user.email}
-                className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="city" className="block text-sm font-medium leading-6 text-black">
-              City
-            </label>
-            <div className="mt-2">
-              <input
-                id="city"
-                name="city"
+                id="make"
+                name="make"
                 type="text"
                 required
-                value={user.city}
+                value={car.make}
                 className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 onChange={handleChange}
               />
@@ -187,16 +137,67 @@ const Edit: React.FC = () => {
           </div>
 
           <div>
-            <label htmlFor="age" className="block text-sm font-medium leading-6 text-black">
-              Age
+            <label htmlFor="mileage" className="block text-sm font-medium leading-6 text-black">
+              Mileage
             </label>
             <div className="mt-2">
               <input
-                id="age"
-                name="age"
-                type="number"
+                id="mileage"
+                name="mileage"
+                type="text"
                 required
-                value={user.age}
+                value={car.mileage}
+                className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="model" className="block text-sm font-medium leading-6 text-black">
+              Model
+            </label>
+            <div className="mt-2">
+              <input
+                id="model"
+                name="model"
+                type="text"
+                required
+                value={car.model}
+                className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="price" className="block text-sm font-medium leading-6 text-black">
+              Price
+            </label>
+            <div className="mt-2">
+              <input
+                id="price"
+                name="price"
+                type="text"
+                required
+                value={car.price}
+                className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="imageUrl" className="block text-sm font-medium leading-6 text-black">
+              Image URL
+            </label>
+            <div className="mt-2">
+              <input
+                id="imageUrl"
+                name="imageUrl"
+                type="text"
+                required
+                value={car.imageUrl}
                 className="block w-full rounded-md border-0 py-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 onChange={handleChange}
               />
@@ -208,7 +209,7 @@ const Edit: React.FC = () => {
               type="submit"
               className="flex w-full justify-center rounded-md bg-indigo-300 px-3 py-1.5 text-sm font-semibold leading-6 text-black shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Update User
+              Update Car
             </button>
           </div>
         </form>
@@ -218,7 +219,7 @@ const Edit: React.FC = () => {
             className="flex w-full justify-center rounded-md bg-red-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-700"
             onClick={handleDelete}
           >
-            Delete User
+            Delete Car
           </button>
         </div>
       </div>
