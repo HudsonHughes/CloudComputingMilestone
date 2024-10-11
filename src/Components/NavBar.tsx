@@ -8,7 +8,6 @@ const NavBar: React.FC = () => {
         <div className="text-white">
           <Link to="/view" className="px-3 py-2 rounded hover:bg-gray-700">View Users</Link>
           <Link to="/add" className="ml-4 px-3 py-2 rounded hover:bg-gray-700">Add User</Link>
-          <Link to="/edit" className="ml-4 px-3 py-2 rounded hover:bg-gray-700">Edit User</Link>
         </div>
         <div className="text-white">
           <Link to="/login" className="px-3 py-2 rounded hover:bg-gray-700">Login</Link>

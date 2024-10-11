@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
@@ -6,7 +5,7 @@ import ForgotPassword from './Pages/ForgotPassword';
 import Add from './Pages/Add';
 import Edit from './Pages/Edit';
 import View from './Pages/View';
-import { firestore, auth } from './firebase/firestore';
+import { auth } from './firebase/firestore';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import NavBar from './Components/NavBar';
 
