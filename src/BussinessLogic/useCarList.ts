@@ -22,7 +22,7 @@ const useCarList = () => {
         const fetchedCars = await carService.getAllCars();
         setCars(fetchedCars);
       } catch (error) {
-        setErrorMessage('Failed to fetch car list.');
+        setErrorMessage(error instanceof Error ? error.message : 'Failed to fetch car list.');
       } finally {
         setLoading(false);
       }

@@ -47,7 +47,7 @@ const useAddCar = () => {
         imageUrl: '',
       });
     } catch (error) {
-      setErrorMessage('Failed to add car.');
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to add car.');
       setSuccessMessage('');
     } finally {
       setLoading(false);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import useEditCar from '../BL/useEditCar';
+import useEditCar from '../BussinessLogic/useEditCar';
 
 const Edit: React.FC = () => {
   const { id } = useParams<{ id: string }>();

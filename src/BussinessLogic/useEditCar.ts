@@ -23,7 +23,7 @@ const useEditCar = (id: string) => {
         const fetchedCar = await carService.getCarById(id);
         setCar(fetchedCar);
       } catch (error) {
-        setErrorMessage('Failed to fetch car data.');
+        setErrorMessage(error instanceof Error ? error.message : 'Failed to fetch car data.');
       } finally {
         setLoading(false);
       }
@@ -51,7 +51,7 @@ const useEditCar = (id: string) => {
         setSuccessMessage('Car updated successfully!');
         setErrorMessage('');
       } catch (error) {
-        setErrorMessage('Failed to update car.');
+        setErrorMessage(error instanceof Error ? error.message : 'Failed to update car.');
         setSuccessMessage('');
       } finally {
         setLoading(false);
@@ -66,7 +66,7 @@ const useEditCar = (id: string) => {
       setSuccessMessage('Car deleted successfully!');
       setErrorMessage('');
     } catch (error) {
-      setErrorMessage('Failed to delete car.');
+      setErrorMessage(error instanceof Error ? error.message : 'Failed to delete car.');
       setSuccessMessage('');
     } finally {
       setLoading(false);

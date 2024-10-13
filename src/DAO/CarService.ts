@@ -72,7 +72,6 @@ class CarService {
       throw error;
     }
   }
-
   async deleteCar(id: string) {
     try {
       const carDocRef = doc(firestore, 'cars', id);
