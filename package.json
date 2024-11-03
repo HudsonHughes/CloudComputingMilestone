@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "heroku-postbuild": "vite build"
+    "heroku-postbuild": "vite build",
+    "start": "vite preview"
   },
   "dependencies": {
     "firebase": "^10.14.1",
