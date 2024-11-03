@@ -5,11 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "ng build --prod",
-    "heroku-postbuild": "ng build --prod"
+    "heroku-postbuild": "vite build"
   },
   "dependencies": {
     "firebase": "^10.14.1",
