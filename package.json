@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "heroku-postbuild": "vite build",
-    "start": "serve -s dist"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.21.1",
