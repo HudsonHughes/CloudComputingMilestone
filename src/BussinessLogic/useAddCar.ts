@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { carService } from '../DAO/CarService';
+import { useState } from "react";
+import { carService } from "../DAO/CarService";
 
 interface CarData {
   color: string;
@@ -13,38 +13,53 @@ interface CarData {
 const useAddCar = () => {
   window.logger.loggly.push("Initializing useAddCar");
 
+  const logToServer = async (message: string) => {
+    // Explicitly define the type of message
+    try {
+      await fetch("/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+    } catch (error) {
+      console.error("Failed to send log to server", error);
+    }
+  };
+
   // State to hold the car data input by the user
   const [carData, setCarData] = useState<CarData>({
-    color: '',
-    make: '',
-    mileage: '',
-    model: '',
+    color: "",
+    make: "",
+    mileage: "",
+    model: "",
     price: 0,
-    imageUrl: '',
+    imageUrl: "",
   });
 
   // State to indicate if the form is being submitted
   const [loading, setLoading] = useState(false);
 
   // State to hold any error message when form submission fails
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   // State to hold the success message after the form is successfully submitted
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
 
   /**
    * Updates the carData state when the user types in the form fields.
    * @param {React.ChangeEvent<HTMLInputElement>} e - The event triggered by user input.
    */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('Entering handleChange');
+    console.log("Entering handleChange");
+    logToServer("Entering handleChange");
+
     // Update the corresponding field in the carData object
     setCarData({
       ...carData,
       [e.target.name]: e.target.value,
     });
-    console.log('Updated carData state:', carData);
-    console.log('Exiting handleChange');
+    console.log("Updated carData state:", carData);
+    console.log("Exiting handleChange");
   };
 
   /**
@@ -52,7 +67,7 @@ const useAddCar = () => {
    * @param {React.FormEvent<HTMLFormElement>} e - The event triggered by form submission.
    */
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log('Entering handleSubmit');
+    console.log("Entering handleSubmit");
     // Prevents the default form behavior (like refreshing the page)
     e.preventDefault();
 
@@ -60,36 +75,37 @@ const useAddCar = () => {
     setLoading(true);
 
     try {
-      console.log('Attempting to call carService.addCar with data:', carData);
+      console.log("Attempting to call carService.addCar with data:", carData);
       // Attempt to add a new car using the carService
       await carService.addCar(carData);
 
       // On success, show success message and clear the form fields
-      console.log('Car added successfully');
-      setSuccessMessage('Car added successfully!');
-      setErrorMessage('');
+      console.log("Car added successfully");
+      setSuccessMessage("Car added successfully!");
+      setErrorMessage("");
       setCarData({
-        color: '',
-        make: '',
-        mileage: '',
-        model: '',
+        color: "",
+        make: "",
+        mileage: "",
+        model: "",
         price: 0,
-        imageUrl: '',
+        imageUrl: "",
       });
     } catch (error) {
       // On failure, show an error message
-      const errorMsg = error instanceof Error ? error.message : 'Failed to add car.';
-      console.error('Error in handleSubmit:', errorMsg);
+      const errorMsg =
+        error instanceof Error ? error.message : "Failed to add car.";
+      console.error("Error in handleSubmit:", errorMsg);
       setErrorMessage(errorMsg);
-      setSuccessMessage('');
+      setSuccessMessage("");
     } finally {
       // After the try/catch, set loading to false whether the submission was successful or not
       setLoading(false);
-      console.log('Exiting handleSubmit');
+      console.log("Exiting handleSubmit");
     }
   };
 
-  console.log('Returning from useAddCar');
+  console.log("Returning from useAddCar");
 
   // Return the necessary state and functions for use in the component
   return {
