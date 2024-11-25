@@ -28,3 +28,8 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+app.post("/log", express.json(), (req, res) => {
+  console.log(req.body.message); // Log received from React client
+  res.send({ status: "ok" });
+});
