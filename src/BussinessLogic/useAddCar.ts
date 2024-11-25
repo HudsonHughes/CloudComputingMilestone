@@ -11,8 +11,7 @@ interface CarData {
 }
 
 const useAddCar = () => {
-  window.logger.loggly.push("Initializing useAddCar");
-
+  console.log("Entered useAddCar()")
   const logToServer = async (message: string) => {
     // Explicitly define the type of message
     try {
