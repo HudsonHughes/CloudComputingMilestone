@@ -23,7 +23,7 @@ const View: React.FC = () => {
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody style={{ backgroundColor: "#f9f9f9" }}>
+        <tbody style={{ backgroundColor: "#0000FF" }}>
           {cars.map((car) => (
             <tr
               key={car.id}
