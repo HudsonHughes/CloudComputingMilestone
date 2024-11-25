@@ -12,7 +12,7 @@ interface Car {
 }
 
 const useEditCar = (id: string) => {
-  console.log(id);
+  console.log("Car ID: " + id);
   // Function to log messages to the server
   const logToServer = async (message: string) => {
     try {
