@@ -11,7 +11,7 @@ interface CarData {
 }
 
 const useAddCar = () => {
-  console.log('Initializing useAddCar');
+  window.logger.loggly.push("Initializing useAddCar");
 
   // State to hold the car data input by the user
   const [carData, setCarData] = useState<CarData>({
