@@ -13,6 +13,7 @@ interface Car {
 
 const useCarList = () => {
   const logToServer = async (message: string) => {
+    console.log(message);
     try {
       await fetch("/log", {
         method: "POST",

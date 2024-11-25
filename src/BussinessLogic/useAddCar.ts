@@ -12,6 +12,7 @@ interface CarData {
 
 const useAddCar = () => {
   const logToServer = async (message: string) => {
+    console.log(message);
     // Explicitly define the type of message
     try {
       await fetch("/log", {
