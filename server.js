@@ -1,6 +1,6 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 
@@ -9,11 +9,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Serve static files from the React app's dist directory
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, "dist")));
 
 // Handle client-side routing by redirecting all requests to `index.html`
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
+app.get("/login", (req, res) => {
+  console.log("GET request received at /login");
+  res.send(
+    "Login! ---------------------------------------------------------------------"
+  );
 });
 
 // Start the server
