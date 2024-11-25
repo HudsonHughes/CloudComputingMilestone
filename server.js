@@ -16,13 +16,6 @@ app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
-app.get("/login", (req, res) => {
-  console.log("GET request received at /login");
-  res.send(
-    "Login! ---------------------------------------------------------------------"
-  );
-});
-
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
